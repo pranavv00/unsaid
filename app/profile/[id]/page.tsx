@@ -56,7 +56,7 @@ export default function ProfilePage() {
   const isOwnProfile = currentUser?.id === id
 
   useEffect(() => {
-    async function fetchProfile() {
+    const fetchProfile = async () => {
       try {
         const res = await fetch(`/api/users/${id}`)
         if (res.ok) {
@@ -73,21 +73,22 @@ export default function ProfilePage() {
   }, [id])
 
   useEffect(() => {
-    if (id && activeTab === 'comments' && comments.length === 0) {
-      async function fetchComments() {
-        setCommentsLoading(true)
-        try {
-          const res = await fetch(`/api/users/${id}/comments`)
-          if (res.ok) {
-            const data = await res.json()
-            setComments(data.comments || [])
-          }
-        } catch (err) {
-          console.error('Failed to fetch comments:', err)
-        } finally {
-          setCommentsLoading(false)
+    const fetchComments = async () => {
+      setCommentsLoading(true)
+      try {
+        const res = await fetch(`/api/users/${id}/comments`)
+        if (res.ok) {
+          const data = await res.json()
+          setComments(data.comments || [])
         }
+      } catch (err) {
+        console.error('Failed to fetch comments:', err)
+      } finally {
+        setCommentsLoading(false)
       }
+    }
+
+    if (id && activeTab === 'comments' && comments.length === 0) {
       fetchComments()
     }
   }, [id, activeTab, comments.length])
