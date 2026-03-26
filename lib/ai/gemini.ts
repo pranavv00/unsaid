@@ -1,15 +1,16 @@
 // lib/ai/gemini.ts
 import { GoogleGenAI } from '@google/genai'
 
-const apiKey = process.env.GEMINI_API_KEY || ''
-// Initialize the new Next Gen SDK
-const ai = new GoogleGenAI({ apiKey })
-
 export async function analyzeCollegeData(collegeName: string, data: string) {
+  const apiKey = process.env.GEMINI_API_KEY || ''
+  
   if (!apiKey) {
     console.error('GEMINI_API_KEY is missing')
     return null
   }
+
+  // Initialize the SDK inside the function to avoid top-level side effects
+  const ai = new GoogleGenAI({ apiKey })
 
   const prompt = `
 Analyze the following student-generated content about ${collegeName}.

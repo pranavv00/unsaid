@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { unstable_noStore as noStore } from 'next/cache'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 export const revalidate = 0
 
 // Handle manual generation trigger
