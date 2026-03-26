@@ -1,0 +1,197 @@
+/* app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-base: #0d0d0f;
+    --bg-surface: #141417;
+    --bg-elevated: #1c1c21;
+    --bg-overlay: #242429;
+
+    --border: rgba(255, 255, 255, 0.07);
+    --border-hover: rgba(255, 255, 255, 0.12);
+
+    --text-primary: #e8e8ed;
+    --text-secondary: #9191a0;
+    --text-tertiary: #545466;
+
+    --accent: #7c6aff;
+    --accent-hover: #8f80ff;
+    --accent-subtle: rgba(124, 106, 255, 0.12);
+
+    --glass-bg: rgba(20, 20, 23, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.07);
+  }
+
+  * {
+    border-color: var(--border);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-dm), system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-hover);
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .card:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-hover);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-family: var(--font-syne), sans-serif;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 4px 20px rgba(124, 106, 255, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+  }
+
+  .btn-ghost:hover {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+  }
+
+  .input-field {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    font-family: var(--font-dm), sans-serif;
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-subtle);
+  }
+
+  .input-field::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .font-display {
+    font-family: var(--font-syne), sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-primary { color: var(--text-primary); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .bg-surface { background: var(--bg-surface); }
+  .bg-elevated { background: var(--bg-elevated); }
+  .bg-overlay { background: var(--bg-overlay); }
+  .border-subtle { border-color: var(--border); }
+  .border-hover { border-color: var(--border-hover); }
+}
+
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* Animated gradient background */
+.gradient-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Skeleton pulse animation */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.skeleton {
+  background: var(--bg-elevated);
+  border-radius: 0.5rem;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+/* Like button animation */
+@keyframes likePopIn {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.like-pop {
+  animation: likePopIn 0.3s ease-out;
+}

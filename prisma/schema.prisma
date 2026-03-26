@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id
+  anonName  String    @unique
+  collegeId Int?
+  createdAt DateTime  @default(now())
+  comments  Comment[]
+  likes     Like[]
+  posts     Post[]
+  reports   Report[]
+  college   College?  @relation(fields: [collegeId], references: [id])
+
+  @@map("users")
+}
+
+model College {
+  id           Int                  @id @default(autoincrement())
+  name         String               @unique
+  slug         String               @unique
+  createdAt    DateTime             @default(now())
+  intelligence CollegeIntelligence?
+  companies    Company[]
+  posts        Post[]
+  users        User[]
+
+  @@map("colleges")
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String
+  collegeId Int?
+  createdAt DateTime @default(now())
+  college   College? @relation(fields: [collegeId], references: [id])
+  posts     Post[]
+
+  @@map("companies")
+}
+
+model Post {
+  id            Int        @id @default(autoincrement())
+  userId        String
+  collegeId     Int?
+  companyId     Int?
+  companyName   String
+  role          String
+  content       String
+  difficulty    Difficulty @default(MEDIUM)
+  result        Result     @default(PENDING)
+  upvotesCount  Int        @default(0)
+  commentsCount Int        @default(0)
+  score         Float      @default(0)
+  isModerated   Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  type          PostType   @default(INTERVIEW)
+  isGlobal      Boolean    @default(true)
+  comments      Comment[]
+  likes         Like[]
+  college       College?   @relation(fields: [collegeId], references: [id])
+  company       Company?   @relation(fields: [companyId], references: [id])
+  user          User       @relation(fields: [userId], references: [id])
+  reports       Report[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("comments")
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  postId    Int
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+model Report {
+  id        Int          @id @default(autoincrement())
+  postId    Int
+  userId    String
+  reason    ReportReason
+  createdAt DateTime     @default(now())
+  post      Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id])
+
+  @@unique([userId, postId])
+  @@map("reports")
+}
+
+model CollegeIntelligence {
+  id                Int      @id @default(autoincrement())
+  collegeId         Int      @unique
+  headline          String
+  summary           String
+  strengths         String[]
+  weaknesses        String[]
+  sentiment         String
+  placementInsight  String
+  satisfactionLevel String
+  updatedAt         DateTime @updatedAt
+  college           College  @relation(fields: [collegeId], references: [id])
+
+  @@map("college_intelligence")
+}
+
+enum PostType {
+  INTERVIEW
+  REVIEW
+  CONFESSION
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+  VERY_HARD
+}
+
+enum Result {
+  SELECTED
+  REJECTED
+  PENDING
+  WAITLISTED
+}
+
+enum ReportReason {
+  ABUSE
+  FAKE_INFO
+  SPAM
+  MISLEADING
+  OTHER
+}
