@@ -62,7 +62,14 @@ export async function GET(
     }
 
     // Safe way to fetch intelligence as a top-level model to bypass relation errors
-    const intelligence = await (db as any).collegeIntelligence?.findUnique({
+    // Use an extra layer of protection to ensure the model exists on the db object
+    const intelligenceModel = (db as any).collegeIntelligence || (db as any).college_intelligence
+    if (!intelligenceModel) {
+      console.warn('CollegeIntelligence model not found on Prisma client')
+      return NextResponse.json(null)
+    }
+
+    const intelligence = await intelligenceModel.findUnique({
       where: { collegeId: college.id }
     })
 
