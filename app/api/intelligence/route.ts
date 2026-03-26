@@ -7,12 +7,10 @@ import { db } from '@/lib/db'
 import { unstable_noStore as noStore } from 'next/cache'
 
 // Handle manual generation trigger
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function POST(req: NextRequest) {
   noStore()
-  const slug = params?.slug
+  const { searchParams } = new URL(req.url)
+  const slug = searchParams.get('slug')
   
   if (!slug) {
     return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
@@ -31,7 +29,7 @@ export async function POST(
     const intelligence = await generateCollegeIntelligence(college.id)
 
     if (!intelligence) {
-      return NextResponse.json({ error: 'Not enough data to generate insights' }, { status: 400 })
+      return NextResponse.json({ error: 'Not enough data for AI insights yet' }, { status: 400 })
     }
 
     return NextResponse.json(intelligence)
@@ -41,14 +39,12 @@ export async function POST(
   }
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(req: NextRequest) {
   noStore()
   
   try {
-    const slug = params?.slug
+    const { searchParams } = new URL(req.url)
+    const slug = searchParams.get('slug')
 
     if (!slug) {
       return NextResponse.json(null)
@@ -62,7 +58,6 @@ export async function GET(
       return NextResponse.json(null)
     }
 
-    // Safe way to fetch intelligence as a top-level model to bypass relation errors
     const intelligenceModel = (db as any).collegeIntelligence || (db as any).college_intelligence
     if (!intelligenceModel) {
       return NextResponse.json(null)
@@ -74,7 +69,6 @@ export async function GET(
 
     return NextResponse.json(intelligence || null)
   } catch (error) {
-    // Return 200/null to satisfy Next.js build-time data collection
     console.warn('Silent fail for intelligence GET (likely build-time):', error)
     return NextResponse.json(null)
   }

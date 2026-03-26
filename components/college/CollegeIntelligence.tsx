@@ -27,7 +27,7 @@ export default function CollegeIntelligence({ slug }: { slug: string }) {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`/api/colleges/${slug}/intelligence`)
+      const res = await fetch(`/api/intelligence?slug=${slug}`)
       if (res.ok) {
         const json = await res.json()
         setData(json)
@@ -43,7 +43,7 @@ export default function CollegeIntelligence({ slug }: { slug: string }) {
     setGenerating(true)
     setError(null)
     try {
-      const res = await fetch(`/api/colleges/${slug}/intelligence`, { method: 'POST' })
+      const res = await fetch(`/api/intelligence?slug=${slug}`, { method: 'POST' })
       if (res.ok) {
         const json = await res.json()
         setData(json)
