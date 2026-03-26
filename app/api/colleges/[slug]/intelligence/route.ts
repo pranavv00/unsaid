@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { unstable_noStore as noStore } from 'next/cache'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 // Handle manual generation trigger
 export async function POST(
   req: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  const { slug } = params
+  noStore()
+  const slug = params?.slug
+  
+  if (!slug) {
+    return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
+  }
   
   try {
     const college = await db.college.findUnique({
@@ -37,7 +44,12 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  const { slug } = params
+  noStore()
+  const slug = params?.slug
+
+  if (!slug) {
+    return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
+  }
 
   try {
     const college = await db.college.findUnique({
